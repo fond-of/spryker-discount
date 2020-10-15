@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<transfers xmlns="spryker:transfer-01"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
+
+    <transfer name="DiscountCustomMessage">
+        <property name="idDiscountCustomMessage" type="int" />
+        <property name="idLocale" type="int" />
+        <property name="idDiscount" type="int" />
+        <property name="errorMessage" type="string" />
+        <property name="successMessage" type="string" />
+        <property name="locale" type="Locale"/>
+    </transfer>
+
+    <transfer name="DiscountConfigurator">
+        <property name="discountCustomMessages" type="DiscountCustomMessage[]"/>
+    </transfer>
+</transfers>

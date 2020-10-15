@@ -1,0 +1,13 @@
+parameters:
+  git_dir: .
+  bin_dir: vendor/bin
+  tasks:
+    composer:
+      no_local_repository: true
+    yamllint: ~
+    jsonlint: ~
+    xmllint: ~
+    phpcs:
+      standard: vendor/spryker/code-sniffer/Spryker/ruleset.xml
+    phpcpd: ~
+    codeception: ~
