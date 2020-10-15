@@ -16,18 +16,20 @@ class DiscountCommunicationFactory extends SprykerDiscountCommunicationFactory
      */
     public function createDiscountFormDataProvider()
     {
-        $discountFormDataProvider = new DiscountFormDataProvider($this->getFacade());
-
+        $discountFormDataProvider = new DiscountFormDataProvider(
+            $this->getFacade(),
+            $this->getDefaultDiscountCreateConfiguratorExpanderPlugin()
+        );
         $discountFormDataProvider->applyFormDataExpanderPlugins($this->getDiscountFormDataProviderExpanderPlugins());
 
         return $discountFormDataProvider;
     }
 
     /**
-     * @return \FondOfSpryker\Zed\Discount\Dependency\Plugin\Form\DiscountFormDataProviderExpanderPluginInterface[]
+     * @return \FondOfSpryker\Zed\Discount\Dependency\Form\DefaultDiscountCreateConfiguratorExpanderPluginInterface[]
      */
-    public function getDiscountFormDataProviderExpanderPlugins(): array
+    public function getDefaultDiscountCreateConfiguratorExpanderPlugin(): array
     {
-        return $this->getProvidedDependency(DiscountDependencyProvider::PLUGIN_DISCOUNT_FORM_DATA_PROVIDER_EXPANDER);
+        return $this->getProvidedDependency(DiscountDependencyProvider::PLUGIN_DEFAULT_DISCOUNT_CREATE_CONFIGURATOR_EXPANDER);
     }
 }

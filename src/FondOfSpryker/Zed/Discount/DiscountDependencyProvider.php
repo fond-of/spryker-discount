@@ -2,24 +2,18 @@
 
 namespace FondOfSpryker\Zed\Discount;
 
-use FondOfSpryker\Zed\Discount\Dependency\Facade\DiscountCustomMessageToLocaleFacadeBridge;
 use Spryker\Zed\Discount\DiscountDependencyProvider as SprykerDiscountDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
 class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
 {
     public const FACADE_LOCALE = 'FACADE_LOCALE';
+    public const PLUGIN_DEFAULT_DISCOUNT_CREATE_CONFIGURATOR_EXPANDER = 'PLUGIN_DEFAULT_DISCOUNT_CREATE_CONFIGURATOR_EXPANDER';
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
-    protected function addLocaleFacade(Container $container): Container
+    public function provideCommunicationLayerDependencies(Container $container)
     {
-        $container->set(static::FACADE_LOCALE, static function (Container $container) {
-            return new DiscountCustomMessageToLocaleFacadeBridge($container->getLocator()->locale()->facade());
-        });
+        $container = parent::provideCommunicationLayerDependencies($container);
+        $container = $this->addDefaultDiscountCreateConfiguratorExpanderPlugin($container);
 
         return $container;
     }
@@ -29,19 +23,19 @@ class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    protected function addDiscountFormDataProviderExpanderPlugins(Container $container): Container
+    protected function addDefaultDiscountCreateConfiguratorExpanderPlugin(Container $container): Container
     {
-        $container->set(static::PLUGIN_DISCOUNT_FORM_DATA_PROVIDER_EXPANDER, static function () {
-            return $this->getDiscountFormDataProviderExpanderPlugins();
+        $container->set(static::PLUGIN_DEFAULT_DISCOUNT_CREATE_CONFIGURATOR_EXPANDER, function () {
+            return $this->getDefaultDiscountCreateConfiguratorExpanderPlugin();
         });
 
         return $container;
     }
 
     /**
-     * @return \FondOfSpryker\Zed\Discount\Dependency\Plugin\Form\DiscountFormDataProviderExpanderPluginInterface[]
+     * @return \FondOfSpryker\Zed\Discount\Dependency\Form\DefaultDiscountCreateConfiguratorExpanderPluginInterface[]
      */
-    protected function getDiscountFormDataProviderExpanderPlugins(): array
+    protected function getDefaultDiscountCreateConfiguratorExpanderPlugin(): array
     {
         return [];
     }

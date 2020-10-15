@@ -8,11 +8,14 @@ use Spryker\Zed\Discount\Communication\Form\DataProvider\DiscountFormDataProvide
 
 class DiscountFormDataProvider extends SprykerDiscountFormDataProvider
 {
+    /**
+     * @var \FondOfSpryker\Zed\Discount\Dependency\Form\DefaultDiscountCreateConfiguratorExpanderPluginInterface[]
+     */
     protected $discountFormDataProviderExpanderPlugins;
 
     /**
      * @param \Spryker\Zed\Discount\Business\DiscountFacadeInterface $discountFacade
-     * @param \FondOfSpryker\Zed\Discount\Dependency\Plugin\Form\DiscountFormDataProviderExpanderPluginInterface[] $discountFormDataProviderExpanderPlugins
+     * @param \FondOfSpryker\Zed\Discount\Dependency\Form\DefaultDiscountCreateConfiguratorExpanderPluginInterface[] $discountFormDataProviderExpanderPlugins
      */
     public function __construct(
         DiscountFacadeInterface $discountFacade,
@@ -32,12 +35,22 @@ class DiscountFormDataProvider extends SprykerDiscountFormDataProvider
     {
         if ($idDiscount === null) {
             $discountConfiguratorTransfer = $this->createDefaultDiscountConfiguratorTransfer();
-            $discountConfiguratorTransfer = $this->executeFormDataProviderPlugins($discountConfiguratorTransfer);
 
             return $discountConfiguratorTransfer;
         }
 
         return $this->discountFacade->findHydratedDiscountConfiguratorByIdDiscount($idDiscount);
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\DiscountConfiguratorTransfer
+     */
+    protected function createDefaultDiscountConfiguratorTransfer(): DiscountConfiguratorTransfer
+    {
+        $discountConfiguratorTransfer = parent::createDefaultDiscountConfiguratorTransfer();
+        $discountConfiguratorTransfer = $this->executeFormDataProviderPlugins($discountConfiguratorTransfer);
+
+        return $discountConfiguratorTransfer;
     }
 
     /**
@@ -49,7 +62,7 @@ class DiscountFormDataProvider extends SprykerDiscountFormDataProvider
         DiscountConfiguratorTransfer $discountConfiguratorTransfer
     ): DiscountConfiguratorTransfer {
         foreach ($this->discountFormDataProviderExpanderPlugins as $dataProviderExpanderPlugin) {
-            $discountConfiguratorTransfer = $dataProviderExpanderPlugin->expandData($discountConfiguratorTransfer);
+            $discountConfiguratorTransfer = $dataProviderExpanderPlugin->expandDefaultDiscountConfigurator($discountConfiguratorTransfer);
         }
 
         return $discountConfiguratorTransfer;
