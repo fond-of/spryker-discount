@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Zed\Discount;
 
+use FondOfSpryker\Zed\DiscountCustomMessages\Communication\Plugin\DiscountCustomMessageCalculatorPlugin;
 use Spryker\Zed\Discount\DiscountDependencyProvider as SprykerDiscountDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
@@ -9,7 +10,7 @@ class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
 {
     public const FACADE_LOCALE = 'FACADE_LOCALE';
     public const PLUGIN_DEFAULT_DISCOUNT_CREATE_CONFIGURATOR_EXPANDER = 'PLUGIN_DEFAULT_DISCOUNT_CREATE_CONFIGURATOR_EXPANDER';
-    public const PLUGIN_DISCOUNT_ENTITY_HYDRATOR = 'PLUGIN_DISCOUNT_ENTITY_HYDRATOR';
+    public const PLUGIN_CUSTOM_MESSAGE_CONNECTOR_PLUGIN = 'PLUGIN_CUSTOM_MESSAGE_CONNECTOR_PLUGIN';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -20,6 +21,7 @@ class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
     {
         $container = parent::provideCommunicationLayerDependencies($container);
         $container = $this->addDefaultDiscountCreateConfiguratorExpanderPlugin($container);
+        $container = $this->addCustomMessageConnectorPlugin($container);
 
         return $container;
     }
@@ -32,7 +34,7 @@ class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
     public function provideBusinessLayerDependencies(Container $container)
     {
         $container = parent::provideBusinessLayerDependencies($container);
-        $container = $this->addDiscountEntityHydratorPlugins($container);
+        $container = $this->addCustomMessageConnectorPlugin($container);
 
         return $container;
     }
@@ -64,20 +66,12 @@ class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    protected function addDiscountEntityHydratorPlugins(Container $container): Container
+    protected function addCustomMessageConnectorPlugin(Container $container): Container
     {
-        $container->set(static::PLUGIN_DISCOUNT_ENTITY_HYDRATOR, function () {
-            return $this->getDiscountEntityHydratorPlugins();
+        $container->set(static::PLUGIN_CUSTOM_MESSAGE_CONNECTOR_PLUGIN, function () {
+            return new DiscountCustomMessageCalculatorPlugin();
         });
 
         return $container;
-    }
-
-    /**
-     * @return \FondOfSpryker\Zed\Discount\Dependency\Persistence\DiscountEntityHydratorPluginInterface[]
-     */
-    protected function getDiscountEntityHydratorPlugins(): array
-    {
-        return [];
     }
 }

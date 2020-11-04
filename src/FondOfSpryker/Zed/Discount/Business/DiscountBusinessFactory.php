@@ -2,34 +2,59 @@
 
 namespace FondOfSpryker\Zed\Discount\Business;
 
-use FondOfSpryker\Zed\Discount\Business\Persistence\DiscountPersist;
+use FondOfSpryker\Zed\Discount\Business\Calculator\Discount;
+use FondOfSpryker\Zed\Discount\Business\Calculator\FilteredCalculator;
+use FondOfSpryker\Zed\Discount\Dependency\Calculator\CustomMessageConnectorPluginInterface;
 use FondOfSpryker\Zed\Discount\DiscountDependencyProvider;
 use Spryker\Zed\Discount\Business\DiscountBusinessFactory as SprykerDiscountBusinessFactory;
 
 class DiscountBusinessFactory extends SprykerDiscountBusinessFactory
 {
     /**
-     * @return \Spryker\Zed\Discount\Business\Persistence\DiscountPersistInterface
+     * @return \Spryker\Zed\Discount\Business\Calculator\DiscountInterface
      */
-    public function createDiscountPersist()
+    public function createDiscount()
     {
-        $discountPersist = new DiscountPersist(
-            $this->createVoucherEngine(),
+        $discount = new Discount(
             $this->getQueryContainer(),
-            $this->createDiscountStoreRelationWriter(),
-            $this->getDiscountPostCreatePlugins(),
-            $this->getDiscountPostUpdatePlugins(),
-            $this->getDiscountEntityHydratorPlugins()
+            $this->createCalculator(),
+            $this->createDecisionRuleBuilder(),
+            $this->createVoucherValidator(),
+            $this->createDiscountEntityMapper(),
+            $this->getStoreFacade(),
+            $this->getMessageConnectorPlugin()
         );
 
-        return $discountPersist;
+        $discount->setDiscountApplicableFilterPlugins($this->getDiscountApplicableFilterPlugins());
+
+        return $discount;
     }
 
     /**
-     * @return \FondOfSpryker\Zed\Discount\Dependency\Persistence\DiscountEntityHydratorPluginInterface[]
+     * @return \Spryker\Zed\Discount\Business\Calculator\CalculatorInterface
      */
-    public function getDiscountEntityHydratorPlugins(): array
+    protected function createCalculator()
     {
-        return $this->getProvidedDependency(DiscountDependencyProvider::PLUGIN_DISCOUNT_ENTITY_HYDRATOR);
+        $calculator = new FilteredCalculator(
+            $this->createCollectorBuilder(),
+            $this->getMessengerFacade(),
+            $this->createDistributor(),
+            $this->getCalculatorPlugins(),
+            $this->getCollectedDiscountGroupingPlugins(),
+            $this->createDiscountableItemFilter(),
+            $this->getMessageConnectorPlugin()
+        );
+
+        $calculator->setCollectorStrategyResolver($this->createCollectorResolver());
+
+        return $calculator;
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\Discount\Dependency\Calculator\CustomMessageConnectorPluginInterface
+     */
+    public function getMessageConnectorPlugin(): CustomMessageConnectorPluginInterface
+    {
+        return $this->getProvidedDependency(DiscountDependencyProvider::PLUGIN_CUSTOM_MESSAGE_CONNECTOR_PLUGIN);
     }
 }

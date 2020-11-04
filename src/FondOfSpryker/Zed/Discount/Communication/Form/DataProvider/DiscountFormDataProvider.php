@@ -34,9 +34,7 @@ class DiscountFormDataProvider extends SprykerDiscountFormDataProvider
     public function getData($idDiscount = null): ?DiscountConfiguratorTransfer
     {
         if ($idDiscount === null) {
-            $discountConfiguratorTransfer = $this->createDefaultDiscountConfiguratorTransfer();
-
-            return $discountConfiguratorTransfer;
+            return $this->createDefaultDiscountConfiguratorTransfer();
         }
 
         return $this->discountFacade->findHydratedDiscountConfiguratorByIdDiscount($idDiscount);

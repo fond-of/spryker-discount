@@ -15,4 +15,8 @@
     <transfer name="DiscountConfigurator">
         <property name="discountCustomMessages" type="DiscountCustomMessage[]"/>
     </transfer>
+
+    <transfer name="Quote">
+        <property name="usedNotAppliedDiscount" type="Discount[]"/>
+    </transfer>
 </transfers>

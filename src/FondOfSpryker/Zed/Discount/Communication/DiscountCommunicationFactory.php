@@ -7,7 +7,7 @@ use FondOfSpryker\Zed\Discount\DiscountDependencyProvider;
 use Spryker\Zed\Discount\Communication\DiscountCommunicationFactory as SprykerDiscountCommunicationFactory;
 
 /**
- * @method \Spryker\Zed\Discount\Business\DiscountFacadeInterface getFacade()
+ * @method \FondOfSpryker\Zed\Discount\Business\DiscountFacadeInterface getFacade()
  */
 class DiscountCommunicationFactory extends SprykerDiscountCommunicationFactory
 {
