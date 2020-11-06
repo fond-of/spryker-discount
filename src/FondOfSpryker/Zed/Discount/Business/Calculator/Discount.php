@@ -66,7 +66,6 @@ class Discount extends SprykerDiscount
 
         $collectedDiscounts = $this->calculator->calculate($applicableDiscounts, $quoteTransfer);
 
-        $this->addUnsuccessMessageForNonApplicableDiscounts($nonApplicableDiscounts, $quoteTransfer);
         $this->addDiscountsToQuote($quoteTransfer, $collectedDiscounts);
         $this->addNonApplicableDiscountsToQuote($quoteTransfer, $nonApplicableDiscounts);
 
@@ -105,7 +104,6 @@ class Discount extends SprykerDiscount
         foreach ($discounts as $discount) {
             if ($discount->getVoucherCode() && !in_array($discount->getVoucherCode(), $usedNotAppliedVoucherCodes)) {
                 $quoteTransfer->addUsedNotAppliedVoucherCode($discount->getVoucherCode());
-                //$quoteTransfer->addUsedNotAppliedDiscount($discount);
             }
         }
     }

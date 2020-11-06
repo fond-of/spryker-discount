@@ -7,9 +7,9 @@ use Generated\Shared\Transfer\DiscountTransfer;
 interface CustomMessageConnectorPluginInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\DiscountTransfer $discountTransfer
-     *
      * @retun void
+     *
+     * @param \Generated\Shared\Transfer\DiscountTransfer $discountTransfer
      */
     public function addSuccessMessage(DiscountTransfer $discountTransfer): void;
 
