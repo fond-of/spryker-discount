@@ -80,6 +80,6 @@ class FilteredCalculator extends SprykerFilteredCalculator
             return;
         }
 
-        $this->messageConnectorPlugin->addSuccessMessage($discountTransfer);
+        $this->messageConnectorPlugin->addSuccessMessageFromDiscountTransfer($discountTransfer);
     }
 }

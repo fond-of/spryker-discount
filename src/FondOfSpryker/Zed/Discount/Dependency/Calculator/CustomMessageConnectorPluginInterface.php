@@ -11,12 +11,22 @@ interface CustomMessageConnectorPluginInterface
      *
      * @param \Generated\Shared\Transfer\DiscountTransfer $discountTransfer
      */
-    public function addSuccessMessage(DiscountTransfer $discountTransfer): void;
+    public function addSuccessMessageFromDiscountTransfer(DiscountTransfer $discountTransfer): void;
+
+    /**
+     * @param string $successMessage
+     */
+    public function addSuccessMessageFromString(string $successMessage): void;
 
     /**
      * @param \Generated\Shared\Transfer\DiscountTransfer $discountTransfer
      *
      * @return void
      */
-    public function addErrorMessage(DiscountTransfer $discountTransfer): void;
+    public function addErrorMessageFromDiscountTransfer(DiscountTransfer $discountTransfer): void;
+
+    /**
+     * @param string $errorMessage
+     */
+    public function addVoucherNotFoundErrorMessage(): void;
 }

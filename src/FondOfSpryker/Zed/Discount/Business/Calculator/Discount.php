@@ -102,14 +102,29 @@ class Discount implements DiscountInterface
             $this->getIdStore($quoteTransfer->getStore())
         );
 
-        [$applicableDiscounts, $nonApplicableDiscounts] = $this->splitDiscountsByApplicability($activeDiscounts, $quoteTransfer);
+        [$applicableDiscounts, $nonApplicableDiscounts, $discountNotFound] = $this->splitDiscountsByApplicability(
+            $activeDiscounts,
+            $quoteTransfer
+        );
 
         $collectedDiscounts = $this->calculator->calculate($applicableDiscounts, $quoteTransfer);
 
         $this->addDiscountsToQuote($quoteTransfer, $collectedDiscounts);
         $this->addNonApplicableDiscountsToQuote($quoteTransfer, $nonApplicableDiscounts);
+        $this->addErrorMessageForVoucherNotFound($discountNotFound);
 
         return $quoteTransfer;
+    }
+
+    /**
+     * @param string $voucherWithoutDiscount
+     */
+    protected function addErrorMessageForVoucherNotFound(array $voucherWithoutDiscount): void
+    {
+        if (count($voucherWithoutDiscount) > 0) {
+            $this->customMessageConnectorPlugin
+                ->addVoucherNotFoundErrorMessage();
+        }
     }
 
     /**
@@ -125,7 +140,7 @@ class Discount implements DiscountInterface
         foreach ($discounts as $discount) {
             if ($discount->getVoucherCode() && !in_array($discount->getVoucherCode(), $usedNotAppliedVoucherCodes)) {
                 $quoteTransfer->addUsedNotAppliedVoucherCode($discount->getVoucherCode());
-                $this->customMessageConnectorPlugin->addErrorMessage($discount);
+                $this->customMessageConnectorPlugin->addErrorMessageFromDiscountTransfer($discount);
             }
         }
     }
@@ -192,6 +207,7 @@ class Discount implements DiscountInterface
         $uniqueVoucherDiscounts = [];
         $applicableDiscounts = [];
         $nonApplicableDiscounts = [];
+
         foreach ($discounts as $key => $discountEntity) {
             if (!$this->isDiscountApplicable($quoteTransfer, $discountEntity) || isset($uniqueVoucherDiscounts[$discountEntity->getIdDiscount()])) {
                 $nonApplicableDiscounts[] = $this->hydrateDiscountTransfer($discountEntity, $quoteTransfer);
@@ -206,7 +222,38 @@ class Discount implements DiscountInterface
             $applicableDiscounts[] = $this->hydrateDiscountTransfer($discountEntity, $quoteTransfer);
         }
 
-        return [$applicableDiscounts, $nonApplicableDiscounts];
+        $discountNotFound = $this->getDiscountNotFoundForVoucher(
+            array_merge($nonApplicableDiscounts, $applicableDiscounts),
+            $quoteTransfer
+        );
+
+        return [$applicableDiscounts, $nonApplicableDiscounts, $discountNotFound];
+    }
+
+    /**
+     * @param DiscountTransfer[] $discounts
+     *
+     * @return string[]
+     */
+    protected function getDiscountNotFoundForVoucher(array $discounts, QuoteTransfer $quoteTransfer): array
+    {
+        $allVoucherCodes = $this->getVoucherCodes($quoteTransfer);
+        $foundVoucherCodes = [];
+        $discountNotFound = [];
+
+        foreach ($discounts as $discount) {
+            $foundVoucherCodes[] = $discount->getVoucherCode();
+        }
+
+        foreach ($allVoucherCodes as $voucherCode) {
+            if (\in_array($voucherCode, $foundVoucherCodes)) {
+                continue;
+            }
+
+            $discountNotFound[] = $voucherCode;
+        }
+
+        return $discountNotFound;
     }
 
     /**
