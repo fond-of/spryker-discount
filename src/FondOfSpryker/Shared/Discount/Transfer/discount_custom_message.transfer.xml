@@ -17,6 +17,6 @@
     </transfer>
 
     <transfer name="Quote">
-        <property name="usedNotAppliedDiscount" type="Discount[]"/>
+        <property name="usedNotAppliedDiscounts" singular="usedNotAppliedDiscount" type="Discount[]"/>
     </transfer>
 </transfers>
