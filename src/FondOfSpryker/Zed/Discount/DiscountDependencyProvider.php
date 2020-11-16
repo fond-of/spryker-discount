@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Zed\Discount;
 
+use FondOfSpryker\Zed\Discount\Dependency\Facade\DiscountToLocaleFacadeBridge;
 use FondOfSpryker\Zed\DiscountCustomMessages\Communication\Plugin\DiscountCustomMessageCalculatorPlugin;
 use Spryker\Zed\Discount\DiscountDependencyProvider as SprykerDiscountDependencyProvider;
 use Spryker\Zed\Kernel\Container;
@@ -22,6 +23,7 @@ class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
         $container = parent::provideCommunicationLayerDependencies($container);
         $container = $this->addDefaultDiscountCreateConfiguratorExpanderPlugin($container);
         $container = $this->addCustomMessageConnectorPlugin($container);
+        $container = $this->addLocaleFacade($container);
 
         return $container;
     }
@@ -70,6 +72,20 @@ class DiscountDependencyProvider extends SprykerDiscountDependencyProvider
     {
         $container->set(static::PLUGIN_CUSTOM_MESSAGE_CONNECTOR_PLUGIN, function () {
             return new DiscountCustomMessageCalculatorPlugin();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addLocaleFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_LOCALE, function (Container $container) {
+            return new DiscountToLocaleFacadeBridge($container->getLocator()->locale()->facade());
         });
 
         return $container;

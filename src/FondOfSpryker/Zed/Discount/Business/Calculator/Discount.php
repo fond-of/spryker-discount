@@ -117,7 +117,9 @@ class Discount implements DiscountInterface
     }
 
     /**
-     * @param string $voucherWithoutDiscount
+     * @param string|array $voucherWithoutDiscount
+     *
+     * @return void
      */
     protected function addErrorMessageForVoucherNotFound(array $voucherWithoutDiscount): void
     {
@@ -231,7 +233,7 @@ class Discount implements DiscountInterface
     }
 
     /**
-     * @param DiscountTransfer[] $discounts
+     * @param \Generated\Shared\Transfer\DiscountTransfer[] $discounts
      *
      * @return string[]
      */
@@ -246,7 +248,7 @@ class Discount implements DiscountInterface
         }
 
         foreach ($allVoucherCodes as $voucherCode) {
-            if (\in_array($voucherCode, $foundVoucherCodes)) {
+            if (in_array($voucherCode, $foundVoucherCodes)) {
                 continue;
             }
 

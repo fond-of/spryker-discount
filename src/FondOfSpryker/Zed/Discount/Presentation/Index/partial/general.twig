@@ -29,15 +29,11 @@
 {% import "@Discount/Index/partial/_plugin_types_macro.twig" as form_macro %}
 {{ form_macro.render_plugin_types(discountForm.discountGeneral) }}
 
-<pre>------</pre>
-
 {% for discountCustomMessage in discountForm.discountCustomMessages %}
     {% set localeName = discountCustomMessage.vars.value.locale.localeName %}
-    {% set collapsed = (currentLocale != localeName) %}
 
     {% embed '@Gui/Partials/localized-ibox.twig' with {
         localeName: localeName,
-        collapsed: collapsed,
         id: 'localizedAttributes-ibox-' ~ localeName
     } %}
         {% block content %}

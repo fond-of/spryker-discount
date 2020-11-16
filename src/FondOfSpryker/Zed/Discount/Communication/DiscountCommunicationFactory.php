@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\Discount\Communication;
 
 use FondOfSpryker\Zed\Discount\Communication\Form\DataProvider\DiscountFormDataProvider;
+use FondOfSpryker\Zed\Discount\Dependency\Facade\DiscountToLocaleFacadeInterface;
 use FondOfSpryker\Zed\Discount\DiscountDependencyProvider;
 use Spryker\Zed\Discount\Communication\DiscountCommunicationFactory as SprykerDiscountCommunicationFactory;
 
@@ -31,5 +32,13 @@ class DiscountCommunicationFactory extends SprykerDiscountCommunicationFactory
     public function getDefaultDiscountCreateConfiguratorExpanderPlugin(): array
     {
         return $this->getProvidedDependency(DiscountDependencyProvider::PLUGIN_DEFAULT_DISCOUNT_CREATE_CONFIGURATOR_EXPANDER);
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\Discount\Dependency\Facade\DiscountToLocaleFacadeInterface
+     */
+    public function getLocaleFacade(): DiscountToLocaleFacadeInterface
+    {
+        return $this->getProvidedDependency(DiscountDependencyProvider::FACADE_LOCALE);
     }
 }
