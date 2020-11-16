@@ -29,15 +29,21 @@
 {% import "@Discount/Index/partial/_plugin_types_macro.twig" as form_macro %}
 {{ form_macro.render_plugin_types(discountForm.discountGeneral) }}
 
-{% for discountCustomMessage in discountForm.discountCustomMessages %}
-    {% set localeName = discountCustomMessage.vars.value.locale.localeName %}
+<h3 class="m-t-xl">{{ 'User feedback messages' | trans }}</h3>
 
-    {% embed '@Gui/Partials/localized-ibox.twig' with {
-        localeName: localeName,
-        id: 'localizedAttributes-ibox-' ~ localeName
-    } %}
-        {% block content %}
-            {{ form_widget(discountCustomMessage) }}
-        {% endblock %}
-    {% endembed %}
-{% endfor %}
+<hr />
+<div class="row">
+    <div class="col-xs-12">
+        {% for discountCustomMessage in discountForm.discountCustomMessages %}
+            {% set localeName = discountCustomMessage.vars.value.locale.localeName %}
+
+            {% embed '@Gui/Partials/localized-ibox.twig' with {
+                id: 'localizedAttributes-ibox-' ~ localeName
+            } %}
+                {% block content %}
+                    {{ form_widget(discountCustomMessage) }}
+                {% endblock %}
+            {% endembed %}
+        {% endfor %}
+    </div>
+</div>
