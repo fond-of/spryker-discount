@@ -82,4 +82,32 @@ class FilteredCalculator extends SprykerFilteredCalculator
 
         $this->messageConnectorPlugin->addSuccessMessageFromDiscountTransfer($discountTransfer);
     }
+
+    /**
+     * @param \Generated\Shared\Transfer\DiscountTransfer[] $discounts
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\CollectedDiscountTransfer[]
+     */
+    protected function calculateDiscountAmount(array $discounts, QuoteTransfer $quoteTransfer): array
+    {
+        $collectedDiscountTransfers = [];
+        foreach ($discounts as $discountTransfer) {
+            $discountableItems = $this->collectItems($quoteTransfer, $discountTransfer);
+
+            if (count($discountableItems) === 0) {
+                $this->messageConnectorPlugin->addErrorMessageFromDiscountTransfer($discountTransfer);
+
+                continue;
+            }
+
+            $calculatorPlugin = $this->getCalculatorPlugin($discountTransfer);
+            $discountAmount = $calculatorPlugin->calculateDiscount($discountableItems, $discountTransfer);
+            $discountTransfer->setAmount($discountAmount);
+
+            $collectedDiscountTransfers[] = $this->createCollectedDiscountTransfer($discountTransfer, $discountableItems);
+        }
+
+        return $collectedDiscountTransfers;
+    }
 }
